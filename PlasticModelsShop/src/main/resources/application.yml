@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: plastic-models-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: flap
+    password: 123
+    url: jdbc:postgresql://localhost:5434/db-plastic-model
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: POSTGRESQL
+  sql:
+    init:
+      platform: postgres
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 11john2001@gmail.com
+    password: naqmlubkgpsmvgta
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:10100}/eureka/
+
+server:
+  port: 8090

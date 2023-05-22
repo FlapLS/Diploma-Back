@@ -1,0 +1,76 @@
+version: "3.9"
+services:
+
+  plastic-model-service-1:
+    build:
+      context: ./PlasticModelsShop
+    container_name: plastic-model-service-1
+    depends_on:
+      - db-plastic-model
+      - eureka-server
+    environment:
+      - EUREKA_HOST=eureka-server
+      - EUREKA_PORT=8761
+      - DATABASE_HOST=db-plastic-model
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=flap
+      - DATABASE_PASSWORD=123
+    networks:
+      - develop
+    ports:
+      - "8090:8090"
+
+  eureka-server:
+    build:
+      context: ./EurekaServer
+    container_name: eureka-server
+    depends_on:
+      - db-plastic-model
+
+    environment:
+      - EUREKA_HOST=eureka-server
+    networks:
+      - develop
+    ports:
+      - "10100:10100"
+
+  api-proxy:
+    build:
+      context: ./ApiGateway
+    container_name: api-proxy
+    environment:
+      - EUREKA_HOST=eureka-server
+      - EUREKA_PORT=10100
+    networks:
+      - develop
+    ports:
+      - "10200:10200"
+
+  db-printers:
+    image: postgres:latest
+    container_name: db-printers
+    environment:
+      POSTGRES_DB: "db-printers"
+      POSTGRES_USER: "flap"
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    networks:
+      - develop
+    ports:
+      - "5433:5432"
+
+  db-plastic-model:
+      image: postgres:latest
+      container_name: db-plastic-model
+      environment:
+        POSTGRES_DB: "db-plastic-model"
+        POSTGRES_USER: "flap"
+        POSTGRES_PASSWORD: "123"
+        POSTGRES_HOST_AUTH_METHOD: "trust"
+      ports:
+        - "5434:5432"
+
+networks:
+  develop:
+    external:
+      name: develop

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: EurekaServer
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false
+      health-check:
+        refetch-instances: true
+        refetch-instances-interval: 1s
+        repeat-health-check: false
+        interval: 1s
+
+server:
+  port: 10100
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    wait-time-in-ms-when-sync-empty: 0
+    response-cache-auto-expiration-in-seconds: 1

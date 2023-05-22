@@ -1,0 +1,60 @@
+spring:
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  application:
+    name: APIGateway
+  cloud:
+    loadbalancer:
+      enabled: true
+      health-check:
+        refetch-instances-interval: 5s
+        refetch-instances: true
+      cache:
+        enabled: false
+      retry:
+        avoid-previous-instance: true
+    gateway:
+      httpserver:
+        wiretap: true
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: PlasticModelsShop
+          uri: lb://PlasticModelsShop
+          predicates:
+            - Path=/plastic-model/**
+            - Method=GET, POST, PUT, DELETE, OPTIONS
+        - id: PrintersShop
+          uri: lb://PrintersShop
+          predicates:
+            - Path=/printers/**
+            - Method=GET, POST, PUT, DELETE, OPTIONS
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:9000"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:10100}/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    hostname: ${EUREKA_HOST:localhost}
+
+logging:
+  level:
+    org.springframework.cloud.loadbalancer: INFO
+    reactor: INFO
+    org.springframework.cloud.gateway: INFO
+
+server:
+  port: 10200
